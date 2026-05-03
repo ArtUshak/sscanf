@@ -76,7 +76,11 @@ float
 bool
 	DoI(char ** input, int * ret)
 {
-	*ret = GetDec(input);
+	if (!GetDec(input, ret))
+	{
+		SetErrorCode(1011);
+		return false;
+	}
 	if (GetReturn(input))
 	{
 		return true;
@@ -88,7 +92,11 @@ bool
 bool
 	DoN(char ** input, int * ret)
 {
-	*ret = GetNumber(input);
+	if (!GetNumber(input, ret))
+	{
+		SetErrorCode(1012);
+		return false;
+	}
 	if (GetReturn(input))
 	{
 		return true;
@@ -100,7 +108,11 @@ bool
 bool
 	DoH(char ** input, int * ret)
 {
-	*ret = GetHex(input);
+	if (!GetHex(input, ret))
+	{
+		SetErrorCode(1013);
+		return false;
+	}
 	if (GetReturn(input))
 	{
 		return true;
@@ -132,7 +144,11 @@ bool
 bool
 	DoO(char ** input, int * ret)
 {
-	*ret = GetOct(input);
+	if (!GetOct(input, ret))
+	{
+		SetErrorCode(1015);
+		return false;
+	}
 	if (GetReturn(input))
 	{
 		return true;
@@ -1102,7 +1118,11 @@ int
 		++(*input);
 		return -GetReturnDefault(input);
 	}
-	*ret = GetDec(input);
+	if (!GetDec(input, ret))
+	{
+		SetErrorCode(1011);
+		return 0;
+	}
 	return GetReturnDefault(input);
 }
 
@@ -1118,7 +1138,11 @@ int
 		++(*input);
 		return -GetReturnDefault(input);
 	}
-	*ret = GetNumber(input);
+	if (!GetDec(input, ret))
+	{
+		SetErrorCode(1012);
+		return 0;
+	}
 	return GetReturnDefault(input);
 }
 
@@ -1134,7 +1158,11 @@ int
 		++(*input);
 		return -GetReturnDefault(input);
 	}
-	*ret = GetHex(input);
+	if (!GetHex(input, ret))
+	{
+		SetErrorCode(1013);
+		return 0;
+	}
 	return GetReturnDefault(input);
 }
 
@@ -1168,7 +1196,11 @@ int
 		++(*input);
 		return -GetReturnDefault(input);
 	}
-	*ret = GetOct(input);
+	if (!GetOct(input, ret))
+	{
+		SetErrorCode(1015);
+		return 0;
+	}
 	return GetReturnDefault(input);
 }
 
@@ -1445,4 +1477,3 @@ int
 	DoL(input, ret);
 	return GetReturnDefault(input);
 }
-

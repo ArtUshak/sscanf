@@ -40,11 +40,14 @@
  *      Emmet_, for his efforts in maintaining it for almost a year.
  */
 
+#include <stdint.h>
 #include <string.h>
 #include "sscanf.h"
 #include "args.h"
 #include "utils.h"
 #include "data.h"
+
+#define UINT32_MAX_DIV_10_CEIL 429496730
 
 extern unsigned int
 	g_iTrueMax;
@@ -640,40 +643,85 @@ unsigned int
 	return id;
 }
 
-int
-	GetDecValue(char ** const input)
+/*
+ * Attempt to convert value to signed integer (inverting it, if neg == true),
+ * store result to *output.
+ *
+ * Return false if such operation will lead to overflow, true otherwise.
+ */
+bool
+	ConvertUnsignedValue(bool neg, unsigned int value, int * output)
+{
+	if (neg)
+	{
+		if (value > ((unsigned int)INT32_MAX) + 1)
+		{
+			*output = 0;
+			return false;
+		}
+		*output = (int)(-value);
+		return true;
+	}
+	else
+	{
+		if (value > ((unsigned int)INT32_MAX))
+		{
+			*output = 0;
+			return false;
+		}
+		*output = (int)value;
+		return true;
+	}
+}
+
+bool
+	GetDecValue(char ** const input, unsigned int * output)
 {
 	char *
 		str = *input;
-	int
+	unsigned int
 		val = 0;
 	unsigned char
 		cur;
 	// Convert to a number and test it.
 	while ((cur = (unsigned char)(*str - '0')) < 10)
 	{
+		// Pre-check for overflow: (old_val * 10) <= UINT32_MAX
+		if (val > UINT32_MAX_DIV_10_CEIL)
+		{
+			*output = 0;
+			return false;
+		}
+		val *= 10;
+		// Pre-check for overflow: (old_val * 10 + cur) <= UINT32_MAX
+		if ((UINT32_MAX - cur) < val)
+		{
+			*output = 0;
+			return false;
+		}
 		// Update the current value.
-		val = (val * 10) + cur;
+		val += cur;
 		// Update the current pointer.
 		++str;
 	}
 	// Save the pointer.
 	*input = str;
 	// Covert the sign and return without an if.
-	return val;
+	*output = val;
+	return true;
 }
 
-int
-	GetDec(char ** const input)
+bool
+	GetDec(char ** const input, int * output)
 {
 	char *
 		str = *input;
-	int
-		neg = 1;
+	bool
+		neg = false;
 	switch (*str)
 	{
 	case '-':
-		neg = -1;
+		neg = true;
 		// FALLTHROUGH
 	case '+':
 		// Check there is valid data after
@@ -684,21 +732,32 @@ int
 		}
 	}
 	*input = str;
-	return GetDecValue(input) * neg;
+	unsigned int raw_value;
+	if (!GetDecValue(input, &raw_value))
+	{
+		*output = 0;
+		return false;
+	}
+	return ConvertUnsignedValue(neg, raw_value, output);
 }
 
-int
-	GetOctValue(char ** const input)
+bool
+	GetOctValue(char ** const input, unsigned int * output)
 {
 	char *
 		str = *input;
-	int
+	unsigned int
 		val = 0;
 	unsigned char
 		cur;
 	// Convert to a number and test it.
 	while ((cur = (unsigned char)(*str - '0')) < 8)
 	{
+		if (val >= 0x20000000)
+		{
+			*output = 0;
+			return false;
+		}
 		// Update the current value.
 		val = (val * 8) + cur;
 		// Update the current pointer.
@@ -707,20 +766,21 @@ int
 	// Save the pointer.
 	*input = str;
 	// Covert the sign and return without an if.
-	return val;
+	*output = val;
+	return true;
 }
 
-int
-	GetOct(char ** const input)
+bool
+	GetOct(char ** const input, int * output)
 {
 	char *
 		str = *input;
-	int
-		neg = 1;
+	bool
+		neg = false;
 	switch (*str)
 	{
 	case '-':
-		neg = -1;
+		neg = true;
 		// FALLTHROUGH
 	case '+':
 		// Check there is valid data after
@@ -731,79 +791,49 @@ int
 		}
 	}
 	*input = str;
-	return GetOctValue(input) * neg;
+	unsigned int raw_value;
+	if (!GetOctValue(input, &raw_value))
+	{
+		*output = 0;
+		return false;
+	}
+	return ConvertUnsignedValue(neg, raw_value, output);
 }
 
-int
-	GetHexValue(char ** const input)
+bool
+	GetHexValue(char ** const input, unsigned int * output)
 {
 	char *
 		str = *input;
-	int
+	unsigned int
 		val = 0;
 	// Rewrote it using a big switch.
 	for ( ; ; )
 	{
-		switch (*str)
+		unsigned char digit;
+		if ((*str >= '0') && (*str <= '9'))
 		{
-		case '0':
-			val = (val * 16) + 0x00;
-			break;
-		case '1':
-			val = (val * 16) + 0x01;
-			break;
-		case '2':
-			val = (val * 16) + 0x02;
-			break;
-		case '3':
-			val = (val * 16) + 0x03;
-			break;
-		case '4':
-			val = (val * 16) + 0x04;
-			break;
-		case '5':
-			val = (val * 16) + 0x05;
-			break;
-		case '6':
-			val = (val * 16) + 0x06;
-			break;
-		case '7':
-			val = (val * 16) + 0x07;
-			break;
-		case '8':
-			val = (val * 16) + 0x08;
-			break;
-		case '9':
-			val = (val * 16) + 0x09;
-			break;
-		case 'a':
-		case 'A':
-			val = (val * 16) + 0x0A;
-			break;
-		case 'b':
-		case 'B':
-			val = (val * 16) + 0x0B;
-			break;
-		case 'c':
-		case 'C':
-			val = (val * 16) + 0x0C;
-			break;
-		case 'd':
-		case 'D':
-			val = (val * 16) + 0x0D;
-			break;
-		case 'e':
-		case 'E':
-			val = (val * 16) + 0x0E;
-			break;
-		case 'f':
-		case 'F':
-			val = (val * 16) + 0x0F;
-			break;
-		default:
-			// UGLY UGLY UGLY!
-			goto sscanf_hex_switch;
+			digit = *str - '0';
 		}
+		else if ((*str >= 'a') && (*str <= 'f'))
+		{
+			digit = *str - 'a' + 10;
+		}
+		else if ((*str >= 'A') && (*str <= 'F'))
+		{
+			digit = *str - 'A' + 10;
+		}
+		else
+		{
+			break;
+		}
+
+		if (val >= 0x10000000)
+		{
+			*output = 0;
+			return false;
+		}
+		val = val * 16 + digit;
 		++str;
 	}
 	// UGLY UGLY UGLY - Needed for the double level break, which isn't native
@@ -812,20 +842,20 @@ int
 	// Save the pointer.
 	*input = str;
 	// Covert the sign and return without an if.
-	return val;
+	*output = val;
+	return true;
 }
 
-int
-	GetHex(char ** const input)
+bool
+	GetHex(char ** const input, int * output)
 {
 	char *
 		str = *input;
-	int
-		neg = 1;
+	bool neg = false;
 	switch (*str)
 	{
 	case '-':
-		neg = -1;
+		neg = true;
 		// FALLTHROUGH
 	case '+':
 		// Check there is valid data after
@@ -854,7 +884,13 @@ int
 		return 0;
 	}
 	*input = str;
-	return GetHexValue(input) * neg;
+	unsigned int raw_value;
+	if (!GetHexValue(input, &raw_value))
+	{
+		*output = 0;
+		return false;
+	}
+	return ConvertUnsignedValue(neg, raw_value, output);
 	// Convert to a number and test it.  Horribly manually optimised - one of
 	// these days I'll try write an ASM hex reader and see how well that works.
 	// Actually I think I have written one before, but I don't know where it is
@@ -929,7 +965,11 @@ unsigned int
 	}
 	// Get the underlying HEX value.
 	*input = str;
-	unsigned int ret = (unsigned int)GetHexValue(input);
+	unsigned int ret;
+	if (!GetHexValue(input, &ret))
+	{
+		return 0;
+	}
 	// Determine the input type.
 	switch (prefix)
 	{
@@ -1045,17 +1085,16 @@ int
 	return (int)GetBoolValue(input);
 }
 
-int
-	GetNumber(char ** const input)
+bool
+	GetNumber(char ** const input, int * output)
 {
 	char *
 		str = *input;
-	int
-		neg = 1;
+	bool neg = false;
 	switch (*str)
 	{
 	case '-':
-		neg = -1;
+		neg = true;
 		// FALLTHROUGH
 	case '+':
 		// Check there is valid data after
@@ -1077,7 +1116,13 @@ int
 			if (((*str >= '0') && (*str <= '9')) || (((*str | 0x20) >= 'a') && ((*str | 0x20) <= 'f')))
 			{
 				*input = str;
-				return GetHexValue(input) * neg;
+				unsigned int raw_value;
+				if (!GetHexValue(input, &raw_value))
+				{
+					*output = 0;
+					return false;
+				}
+				return ConvertUnsignedValue(neg, raw_value, output);
 			}
 			else
 			{
@@ -1087,7 +1132,7 @@ int
 		case 'b':
 		case 'B':
 			// Bool.
-			if (neg == -1)
+			if (neg)
 			{
 				// Can't have negative booleans.
 				*input = str;
@@ -1117,7 +1162,13 @@ int
 		case '7':
 			// Octal.
 			*input = str;
-			return GetOctValue(input) * neg;
+			unsigned int raw_value;
+			if (!GetOctValue(input, &raw_value))
+			{
+				*output = 0;
+				return false;
+			}
+			return ConvertUnsignedValue(neg, raw_value, output);
 		case '8':
 		case '9':
 			// Decimal.
@@ -1133,7 +1184,13 @@ int
 		return 0;
 	}
 	*input = str;
-	return GetDecValue(input) * neg;
+	unsigned int raw_value;
+	if (!GetDecValue(input, &raw_value))
+	{
+		*output = 0;
+		return false;
+	}
+	return ConvertUnsignedValue(neg, raw_value, output);
 }
 
 bool
@@ -1329,7 +1386,11 @@ int
 		}
 		else
 		{
-			length = GetDec(input);
+			if (!GetDec(input, &length))
+			{
+				length = 1;
+				SscanfError(17, "Invalid data length.");
+			}
 			str = *input;
 			if (length <= 0)
 			{

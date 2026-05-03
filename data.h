@@ -71,14 +71,14 @@ char *
 unsigned int
 	GetUserString(char * string, char ** end);
 
-int
-	GetDec(char ** const input);
+bool
+	GetDec(char ** const input, int * output);
 
-int
-	GetOct(char ** const input);
+bool
+	GetOct(char ** const input, int * output);
 
-int
-	GetHex(char ** const input);
+bool
+	GetHex(char ** const input, int * output);
 
 unsigned int
 	GetColour(char ** const input, int * type, unsigned int alpha);
@@ -86,8 +86,8 @@ unsigned int
 int
 	GetBool(char ** const input);
 
-int
-	GetNumber(char ** const input);
+bool
+	GetNumber(char ** const input, int * output);
 
 bool
 	GetLogical(char ** const input);
@@ -103,4 +103,3 @@ int
 
 bool
 	FindDefaultStart(char ** const str);
-

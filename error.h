@@ -56,4 +56,3 @@ extern void
 
 extern int
 	GetErrorCategory(int error);
-

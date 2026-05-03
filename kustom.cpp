@@ -147,7 +147,13 @@ bool
 					}
 					else
 					{
-						*cptr = (cell)GetNumber(&opts);
+						int value;
+						if (!GetNumber(&opts, &value))
+						{
+							SetErrorCode(1012);
+							return false;
+						}
+						*cptr = (cell)value;
 						return true;
 					}
 				}
@@ -254,4 +260,3 @@ bool
 	}
 	return true;
 }
-
