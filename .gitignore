@@ -37,3 +37,17 @@
 /build
 /docker/build
 /docker/conan
+
+# sampctl files
+/samp-npc
+/samp03svr
+/pawn.lock
+/announce
+/server.cfg
+/dependencies/
+/server_log.txt
+/sampctl_build_file.inc
+*.amx
+
+# Zed editor settings
+.zed/

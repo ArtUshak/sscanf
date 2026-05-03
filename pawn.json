@@ -1,7 +1,7 @@
 {
-    "user": "Y-Less",
-    "repo": "sscanf",
-    "contributors": [
+	"user": "Y-Less",
+	"repo": "sscanf",
+	"contributors": [
 		"Cheaterman",
 		"DEntisT",
 		"Emmet_",
@@ -14,23 +14,27 @@
 		"Y_Less",
 		"ziggi"
 	],
-    "resources": [
-        {
-            "name": "^sscanf-(.+)-linux.tar.gz$",
-            "platform": "linux",
-            "archive": true,
-            "includes": ["pawno/include"],
-            "plugins": ["plugins/sscanf.so"]
-        },
-        {
-            "name": "^sscanf-(.*)-win32.zip$",
-            "platform": "windows",
-            "archive": true,
-            "includes": ["pawno/include"],
-            "plugins": ["plugins/sscanf.dll"]
-        }
-    ],
-    "runtime": {
-        "plugins": ["Y-Less/sscanf"]
-    }
+	"entry": "tests/sscanfErr.pwn",
+	"output": "gamemodes/sscanfErr.amx",
+	"dev_dependencies": ["pawn-lang/samp-stdlib@master"],
+	"runtime": {
+		"plugins": ["Y-Less/sscanf"],
+		"mode": "main"
+	},
+	"resources": [
+		{
+			"name": "^sscanf-(.+)-linux.tar.gz$",
+			"platform": "linux",
+			"archive": true,
+			"includes": ["pawno/include"],
+			"plugins": ["plugins/sscanf.so"]
+		},
+		{
+			"name": "^sscanf-(.*)-win32.zip$",
+			"platform": "windows",
+			"archive": true,
+			"includes": ["pawno/include"],
+			"plugins": ["plugins/sscanf.dll"]
+		}
+	]
 }
