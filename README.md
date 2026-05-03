@@ -2573,7 +2573,7 @@ This code tries to be slightly clever, but fails.  The correct way to check for 
 There is a third version of this error which looks like:
 
 ```
-error 004: function "sscanf" is not implemented <library>sscanf</library>      <remarks>  The main entry point.  See the readme for vast amounts of information on how  to call this function and all the details on what it does.  This is a macro  that calls <c>SSCANF__</c> and passes the current file and line number as  well for improved error messages.  </remarks> 
+error 004: function "sscanf" is not implemented <library>sscanf</library>      <remarks>  The main entry point.  See the readme for vast amounts of information on how  to call this function and all the details on what it does.  This is a macro  that calls <c>SSCANF__</c> and passes the current file and line number as  well for improved error messages.  </remarks>
 ```
 
 For more information on why, see [this compiler issue](https://github.com/pawn-lang/compiler/issues/705).
@@ -3224,4 +3224,3 @@ the Initial Developer.  All Rights Reserved.
 * Added alternates via `|`.
 * `SSCANF_GetErrorSpecifier` to get the error position in failure cases.
 * `SSCANF_Debug` to dump a load of useful debugging information.
-

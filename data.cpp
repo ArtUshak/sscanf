@@ -64,25 +64,25 @@ float
 	gNameSimilarity = -1.0f;
 
 // Options:
-//  
+//
 //  1 = OLD_DEFAULT_NAME
-//  
+//
 //    Parse values in "U(5)" as if they were a name that must be connected,
 //    instead of just any number.
-//  
+//
 //  2 = MATCH_NAME_PARTIAL
-//  
+//
 //    When searching for players, match any part of their name not just the
 //    start.
-//  
+//
 //  4 = CELLMIN_ON_MATCHES
-//  
+//
 //    If multiple player name matches are found, return 0x80000000.
-//  
+//
 //  8 = SSCANF_QUIET
-//  
+//
 //    Disable all prints.
-//  
+//
 // 16 = OLD_DEFAULT_KUSTOM
 //
 //    `K(def)` needs a valid input as the default value.
@@ -97,7 +97,7 @@ float
 //
 E_SSCANF_OPTIONS
 	gOptions = SSCANF_OPTIONS_NONE;
-	
+
 cell * args_s::Next()
 {
 	if (HasMore())
@@ -1483,4 +1483,3 @@ float
 	// Normalise the number of matching pairs and multiply.
 	return (1.0f - ((float)unique1 / (float)ngrams1)) * (1.0f - ((float)unique2 / (float)ngrams2));
 }
-

@@ -71,19 +71,19 @@
  *     <em>specifiers</em> which can easily extract data types, at the expense
  *     of fine-grained control.  To convert a string in to two numbers would
  *     look like:
- *     
+ *
  *     <code>
  *         new num1, num2;                                                          <br />
  *         sscanf("45 100", "ii", num1, num2);
  *     </code>
- *     
+ *
  *     <c>ii</c> is the specifier string, which here means "integer integer";
  *     stating that the input string should be two whole numbers in a row (which
  *     is - <c>"45 100"</c>).  <c>num1</c> and <c>num2</c> are the destination
  *     variables to store the found numbers in (after conversion from strings).
  *     You can check if the conversion failed by looking for a non-naught return
  *     value:
- *     
+ *
  *     <code>
  *         new num1, num2;                                                          <br />
  *         if (sscanf("hello 100", "ii", num1, num2))                               <br />
@@ -91,7 +91,7 @@
  *             printf("The input was not two numbers.");                            <br />
  *         }
  *     </code>
- *     
+ *
  *     This will fail because <c>"hello"</c> is not a whole number (or indeed
  *     any type of number at all).  For more information on using the function
  *     refer to the tutorials or the reference documentation in
@@ -793,7 +793,7 @@ stock const MATCH_NAME_PARTIAL[] = "MATCH_NAME_PARTIAL";
  * anyone.  To detect this case, if more than one player will match the
  * specified string then <em>sscanf</em> will return an ID of <c>cellmin</c>
  * instead.  This can be combined with <c>U</c> for a lot more power:
- * 
+ *
  * <code>
  *     sscanf(params, "?&lt;CELLMIN_ON_MATCHES=1&gt;U(-1)", id);                <br />
  *     if (id == -1)                                                            <br />
@@ -824,14 +824,14 @@ stock const CELLMIN_ON_MATCHES[] = "CELLMIN_ON_MATCHES";
  * compile-time spell checking on the name.  As with <c>U</c>, <c>K</c> used to
  * require a valid identifier as the default and would parse it using the
  * specified callback, so this would <em>not</em> work:
- * 
+ *
  * <code>
  *     K&lt;vehicle&gt;(Veyron)
  * </code>
  *
  * Because that is not a valid vehicle name in GTA.  The new version now just
  * takes a number and returns that regardless:
- * 
+ *
  * <code>
  *     K&lt;vehicle&gt;(999)
  * </code>
@@ -1650,7 +1650,7 @@ stock SSCANF_GetClosestValue(const input[], const candidates[][], const results[
 			"Thermal Goggles",
 			"Parachute"
 		};
-		
+
 		// This function is VERY basic, needs VASTLY improving to detect variations.
 		if ('0' <= string[0] <= '9')
 		{
@@ -2148,12 +2148,12 @@ Return:
 Notes:
 	A fail is either insufficient variables to store the data or insufficient
 	data for the format string - excess data is disgarded.
- 
+
 	A string in the middle of the input data is extracted as a single word, a
 	string at the end of the data collects all remaining text.
- 
+
 	The format codes are:
- 
+
 	c - A character.
 	d, i - An integer.
 	h, x - A hex number (e.g. a colour).
@@ -2163,13 +2163,13 @@ Notes:
 	pX - An additional delimiter where X is another character.
 	'' - Encloses a litteral string to locate.
 	u - User, takes a name, part of a name or an id and returns the id if they're connected.
- 
+
 	Now has IsNumeric integrated into the code.
- 
+
 	Added additional delimiters in the form of all whitespace and an
 	optioanlly specified one in the format string.
 -*----------------------------------------------------------------------------*/
- 
+
 stock sscanf(string[], format[], {Float,_}:...)
 {
 	#if defined isnull
@@ -2267,15 +2267,15 @@ stock sscanf(string[], format[], {Float,_}:...)
 			}
 			case 'f':
 			{
- 
-				new changestr[16], changepos = 0, strpos = stringPos;     
+
+				new changestr[16], changepos = 0, strpos = stringPos;
 				while(changepos < 16 && string[strpos] && string[strpos] != delim)
 				{
 					changestr[changepos++] = string[strpos++];
-    				} 
-				changestr[changepos] = '\0'; 
-				setarg(paramPos,0,_:floatstr(changestr)); 
-			} 
+    				}
+				changestr[changepos] = '\0';
+				setarg(paramPos,0,_:floatstr(changestr));
+			}
 			case 'p':
 			{
 				delim = format[formatPos++];
@@ -2420,4 +2420,3 @@ stock sscanf(string[], format[], {Float,_}:...)
 	while (delim > ' ');
 	return 0;
 }
-

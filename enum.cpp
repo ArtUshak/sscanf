@@ -608,14 +608,14 @@ int
 			}
 			// Loop cleanup - only skip one spacer so that we can detect
 			// multiple explicit delimiters in a row, for example:
-			// 
+			//
 			// hi     there
-			// 
+			//
 			// is NOT multiple explicit delimiters in a row (they're
 			// whitespace).  This however is:
-			// 
+			//
 			// hi , , , there
-			// 
+			//
 			SkipOneSpacer(&string);
 		}
 	}
@@ -764,4 +764,3 @@ bool
 	}
 	return true;
 }
-
